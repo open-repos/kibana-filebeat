@@ -1,0 +1,31 @@
+filebeat.inputs:
+  - type: filestream
+    id: geonature-docker-json
+    enabled: true
+    paths:
+      - /var/lib/docker/containers/*/*-json.log
+    parsers:
+      - container:
+          stream: all
+          format: docker
+    include_lines:
+      - '(?i)(warn|warning|error|exception|traceback|critical|fatal)'
+    prospector.scanner.check_interval: 2s
+    close.on_state_change.inactive: 5m
+    ignore_older: 24h
+    clean_inactive: 25h
+
+processors:
+  - add_host_metadata: {}
+  - add_docker_metadata:
+      host: "unix:///var/run/docker.sock"
+      match_source: true
+      match_source_index: 4
+      cleanup_timeout: 60
+      labels.dedot: true
+
+setup.kibana:
+  host: "${KIBANA_HOST:http://kibana:5601}"
+
+output.elasticsearch:
+  hosts: ["${ELASTICSEARCH_HOSTS:http://elasticsearch:9200}"]

@@ -1,0 +1,19 @@
+.env
+
+# Local env variants
+.env.local
+.env.*.local
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS / temp
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
